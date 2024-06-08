@@ -6,6 +6,7 @@ public class EnemyShoot : MonoBehaviour
 {
     [SerializeField] private GameObject enemyBulletPrefab;
     [SerializeField] private float shootDelay;
+    [SerializeField] private float rangeDistance;
     private Transform target;
     private float timer;
 
@@ -23,18 +24,27 @@ public class EnemyShoot : MonoBehaviour
     {
         if (target!=null)
         {
-            timer += Time.deltaTime;
-            if (timer >= shootDelay)
+            if (Vector2.Distance(transform.position, target.position) <= rangeDistance)
             {
-                Vector2 direcion = target.position - transform.position;
-                direcion.y = 0;
-                direcion = direcion.normalized;
-                GameObject obj = Instantiate(enemyBulletPrefab);
-                obj.transform.position = transform.position;
-                obj.GetComponent<Bullet>().SetDirection(direcion);
-                timer = 0;
+                timer += Time.deltaTime;
+                if (timer >= shootDelay)
+                {
+                    Vector2 direcion = target.position - transform.position;
+                    direcion.y = 0;
+                    direcion = direcion.normalized;
+                    GameObject obj = Instantiate(enemyBulletPrefab);
+                    obj.transform.position = transform.position;
+                    obj.GetComponent<Bullet>().SetDirection(direcion);
+                    timer = 0;
+                }
             }
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, rangeDistance);
     }
 
 }
