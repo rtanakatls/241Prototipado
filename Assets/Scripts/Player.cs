@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -15,14 +16,22 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask groundLayerMask;
 
     [SerializeField] private GameObject bulletPrefab;
+
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip[] bulletClips;
     void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
     }
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("MainScene");
+        }
         Move();
         GroundCheck();
         Jump();
@@ -47,6 +56,7 @@ public class Player : MonoBehaviour
         {
             GameObject obj=Instantiate(bulletPrefab);
             obj.transform.position = transform.position;
+            audioSource.PlayOneShot(bulletClips[Random.Range(0,bulletClips.Length)]);
             obj.GetComponent<Bullet>().SetDirection(new Vector2(transform.localScale.x, 0));
         }
     }
